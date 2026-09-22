@@ -225,40 +225,50 @@ def generate_products():
             SUBCATEGORIES[category]
         )
 
-        # Different product categories have different
-        # typical price ranges.
-
         if category == "Groceries":
+
             cost_price = np.random.uniform(
                 20,
                 1000
             )
 
         elif category == "Books":
+
             cost_price = np.random.uniform(
                 100,
                 2000
             )
 
-        elif category in ["Clothing", "Footwear", "Beauty"]:
+        elif category in [
+            "Clothing",
+            "Footwear",
+            "Beauty"
+        ]:
+
             cost_price = np.random.uniform(
                 200,
                 5000
             )
 
-        elif category in ["Sports", "Toys"]:
+        elif category in [
+            "Sports",
+            "Toys"
+        ]:
+
             cost_price = np.random.uniform(
                 200,
                 5000
             )
 
         elif category == "Furniture":
+
             cost_price = np.random.uniform(
                 2000,
                 30000
             )
 
         else:
+
             cost_price = np.random.uniform(
                 500,
                 50000
@@ -278,22 +288,27 @@ def generate_products():
         )
 
         product = {
-            "product_id": f"PROD{i:05d}",
 
-            "product_name": (
-                f"{fake.word().title()} "
-                f"{subcategory}"
-            ),
+            "product_id":
+                f"PROD{i:05d}",
 
-            "category": category,
+            "product_name":
+                f"{fake.word().title()} {subcategory}",
 
-            "subcategory": subcategory,
+            "category":
+                category,
 
-            "brand": fake.company(),
+            "subcategory":
+                subcategory,
 
-            "cost_price": cost_price,
+            "brand":
+                fake.company(),
 
-            "selling_price": selling_price
+            "cost_price":
+                cost_price,
+
+            "selling_price":
+                selling_price
         }
 
         products.append(product)
@@ -317,38 +332,38 @@ def generate_stores():
         )
 
         store = {
-            "store_id": f"STORE{i:04d}",
 
-            "store_name": (
-                f"{fake.city()} Retail Store"
-            ),
+            "store_id":
+                f"STORE{i:04d}",
 
-            "city": np.random.choice(
-                CITIES
-            ),
+            "store_name":
+                f"{fake.city()} Retail Store",
 
-            "state": np.random.choice(
-                STATES
-            ),
+            "city":
+                np.random.choice(CITIES),
 
-            "region": np.random.choice(
-                REGIONS
-            ),
+            "state":
+                np.random.choice(STATES),
 
-            "store_type": np.random.choice(
-                [
-                    "Mall",
-                    "High Street",
-                    "Standalone"
-                ],
-                p=[
-                    0.35,
-                    0.40,
-                    0.25
-                ]
-            ),
+            "region":
+                np.random.choice(REGIONS),
 
-            "opening_date": opening_date
+            "store_type":
+                np.random.choice(
+                    [
+                        "Mall",
+                        "High Street",
+                        "Standalone"
+                    ],
+                    p=[
+                        0.35,
+                        0.40,
+                        0.25
+                    ]
+                ),
+
+            "opening_date":
+                opening_date
         }
 
         stores.append(store)
@@ -369,7 +384,7 @@ def generate_transactions(
     print("\nGenerating transactions...")
 
     # --------------------------------------------------------
-    # Create transaction dates
+    # Transaction dates
     # --------------------------------------------------------
 
     dates = pd.date_range(
@@ -380,8 +395,6 @@ def generate_transactions(
 
     # --------------------------------------------------------
     # Product popularity
-    #
-    # Some products will naturally sell more than others.
     # --------------------------------------------------------
 
     product_weights = np.random.exponential(
@@ -396,8 +409,6 @@ def generate_transactions(
 
     # --------------------------------------------------------
     # Customer purchase frequency
-    #
-    # Some customers will make more purchases.
     # --------------------------------------------------------
 
     customer_weights = np.random.exponential(
@@ -416,7 +427,10 @@ def generate_transactions(
 
     transaction_ids = [
         f"TXN{i:06d}"
-        for i in range(1, NUM_TRANSACTIONS + 1)
+        for i in range(
+            1,
+            NUM_TRANSACTIONS + 1
+        )
     ]
 
     selected_customers = np.random.choice(
@@ -442,7 +456,7 @@ def generate_transactions(
     )
 
     # --------------------------------------------------------
-    # Build transaction dataframe
+    # Create transaction dataframe
     # --------------------------------------------------------
 
     transactions = pd.DataFrame({
@@ -491,7 +505,7 @@ def generate_transactions(
     })
 
     # --------------------------------------------------------
-    # Add product pricing
+    # Product pricing
     # --------------------------------------------------------
 
     product_prices = products[
@@ -509,10 +523,12 @@ def generate_transactions(
     )
 
     # --------------------------------------------------------
-    # Add discount
+    # Discounts
     # --------------------------------------------------------
 
-    transactions["discount_percent"] = np.random.choice(
+    transactions[
+        "discount_percent"
+    ] = np.random.choice(
         [0, 5, 10, 15, 20, 25],
         size=NUM_TRANSACTIONS,
         p=[
@@ -526,40 +542,60 @@ def generate_transactions(
     )
 
     # --------------------------------------------------------
-    # Calculate sales
+    # Sales calculations
     # --------------------------------------------------------
 
-    transactions["gross_sales"] = (
+    transactions[
+        "gross_sales"
+    ] = (
         transactions["quantity"]
         * transactions["selling_price"]
     )
 
-    transactions["discount_amount"] = (
+    transactions[
+        "discount_amount"
+    ] = (
         transactions["gross_sales"]
         * transactions["discount_percent"]
         / 100
     )
 
-    transactions["net_sales"] = (
+    transactions[
+        "net_sales"
+    ] = (
         transactions["gross_sales"]
         - transactions["discount_amount"]
     )
 
     # --------------------------------------------------------
-    # Calculate cost and profit
+    # Cost
     # --------------------------------------------------------
 
-    transactions["total_cost"] = (
+    transactions[
+        "total_cost"
+    ] = (
         transactions["quantity"]
         * transactions["cost_price"]
     )
 
-    transactions["profit"] = (
+    # --------------------------------------------------------
+    # Profit
+    # --------------------------------------------------------
+
+    transactions[
+        "profit"
+    ] = (
         transactions["net_sales"]
         - transactions["total_cost"]
     )
 
-    transactions["profit_margin"] = (
+    # --------------------------------------------------------
+    # Profit margin
+    # --------------------------------------------------------
+
+    transactions[
+        "profit_margin"
+    ] = (
         transactions["profit"]
         / transactions["net_sales"]
         * 100
@@ -580,16 +616,194 @@ def generate_transactions(
         "profit_margin"
     ]
 
-    transactions[monetary_columns] = (
-        transactions[monetary_columns]
-        .round(2)
-    )
+    transactions[
+        monetary_columns
+    ] = transactions[
+        monetary_columns
+    ].round(2)
 
     return transactions
 
 
 # ============================================================
-# 5. MAIN
+# 5. INVENTORY DATA
+# ============================================================
+
+def generate_inventory(
+    products,
+    stores,
+    transactions
+):
+
+    print("\nGenerating inventory data...")
+
+    # --------------------------------------------------------
+    # Monthly dates
+    # --------------------------------------------------------
+
+    inventory_dates = pd.date_range(
+        start=START_DATE,
+        end=END_DATE,
+        freq="MS"
+    )
+
+    # --------------------------------------------------------
+    # Select product-store combinations
+    #
+    # Each store carries approximately 15% of all products.
+    # --------------------------------------------------------
+
+    inventory_records = []
+
+    transaction_sales = (
+        transactions
+        .groupby(
+            [
+                "store_id",
+                "product_id"
+            ]
+        )["quantity"]
+        .sum()
+        .reset_index()
+    )
+
+    transaction_sales = transaction_sales.rename(
+        columns={
+            "quantity": "total_units_sold"
+        }
+    )
+
+    # --------------------------------------------------------
+    # Create product-store combinations
+    # --------------------------------------------------------
+
+    for store_id in stores["store_id"]:
+
+        selected_products = np.random.choice(
+            products["product_id"],
+            size=int(
+                len(products) * 0.15
+            ),
+            replace=False
+        )
+
+        for product_id in selected_products:
+
+            # Find historical sales for this
+            # store-product combination.
+
+            matching_sales = transaction_sales[
+                (
+                    transaction_sales["store_id"]
+                    == store_id
+                )
+                &
+                (
+                    transaction_sales["product_id"]
+                    == product_id
+                )
+            ]
+
+            if len(matching_sales) > 0:
+
+                total_units_sold = int(
+                    matching_sales[
+                        "total_units_sold"
+                    ].iloc[0]
+                )
+
+            else:
+
+                total_units_sold = np.random.randint(
+                    0,
+                    20
+                )
+
+            # ------------------------------------------------
+            # Generate monthly inventory
+            # ------------------------------------------------
+
+            opening_stock = np.random.randint(
+                20,
+                500
+            )
+
+            for inventory_date in inventory_dates:
+
+                units_received = np.random.randint(
+                    0,
+                    200
+                )
+
+                # Approximate monthly sales
+                monthly_sales = max(
+                    0,
+                    int(
+                        np.random.normal(
+                            loc=max(
+                                total_units_sold / 24,
+                                5
+                            ),
+                            scale=5
+                        )
+                    )
+                )
+
+                units_sold = min(
+                    monthly_sales,
+                    opening_stock + units_received
+                )
+
+                closing_stock = (
+                    opening_stock
+                    + units_received
+                    - units_sold
+                )
+
+                reorder_level = np.random.randint(
+                    20,
+                    80
+                )
+
+                inventory_records.append({
+
+                    "inventory_date":
+                        inventory_date,
+
+                    "store_id":
+                        store_id,
+
+                    "product_id":
+                        product_id,
+
+                    "opening_stock":
+                        opening_stock,
+
+                    "units_received":
+                        units_received,
+
+                    "units_sold":
+                        units_sold,
+
+                    "closing_stock":
+                        closing_stock,
+
+                    "reorder_level":
+                        reorder_level
+                })
+
+                # Next month's opening stock
+                opening_stock = closing_stock
+
+    inventory = pd.DataFrame(
+        inventory_records
+    )
+
+    return inventory
+
+
+# ============================================================
+# 6. MAIN
 # ============================================================
 
 if __name__ == "__main__":
@@ -599,16 +813,24 @@ if __name__ == "__main__":
     print("========================================")
 
     # --------------------------------------------------------
-    # Generate master datasets
+    # Generate customers
     # --------------------------------------------------------
 
     print("\nGenerating customer data...")
 
     customers = generate_customers()
 
+    # --------------------------------------------------------
+    # Generate products
+    # --------------------------------------------------------
+
     print("Generating product data...")
 
     products = generate_products()
+
+    # --------------------------------------------------------
+    # Generate stores
+    # --------------------------------------------------------
 
     print("Generating store data...")
 
@@ -625,8 +847,20 @@ if __name__ == "__main__":
     )
 
     # --------------------------------------------------------
-    # Save datasets
+    # Generate inventory
     # --------------------------------------------------------
+
+    inventory = generate_inventory(
+        products,
+        stores,
+        transactions
+    )
+
+    # --------------------------------------------------------
+    # Save data
+    # --------------------------------------------------------
+
+    print("\nSaving datasets...")
 
     customers.to_csv(
         "data/raw/customers.csv",
@@ -645,6 +879,11 @@ if __name__ == "__main__":
 
     transactions.to_csv(
         "data/raw/transactions.csv",
+        index=False
+    )
+
+    inventory.to_csv(
+        "data/raw/inventory.csv",
         index=False
     )
 
@@ -673,10 +912,13 @@ if __name__ == "__main__":
     )
 
     print(
-        "\nFiles created inside data/raw/"
+        f"Inventory    : {len(inventory):,}"
     )
+
+    print("\nFiles created inside data/raw/")
 
     print("customers.csv")
     print("products.csv")
     print("stores.csv")
     print("transactions.csv")
+    print("inventory.csv")
